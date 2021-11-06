@@ -28,15 +28,22 @@
 import { defineComponent, reactive, ref, computed } from "vue";
 import axios from "axios";
 import { onMounted } from "vue";
-import { pokeRegion, RegionId } from "@/types/pokeRegion.interface";
+import {
+  pokeRegion,
+  RegionId,
+  RegionTypes,
+  PokemonEntry,
+} from "@/types/pokeRegion.interface";
 import { pokemonInfo } from "@/types/pokeApi.interface";
 import sidebar from "@/components/sidebar.vue";
+import { useStore } from "vuex";
 
 export default defineComponent({
   name: "Home",
   components: { sidebar },
   setup() {
     //reactive components
+    const store = useStore();
     const state: pokeRegion = reactive({
       region_api_data: null,
       region_name: null,
@@ -45,7 +52,7 @@ export default defineComponent({
     });
 
     let searchText = ref("");
-    let pokeList = ref([]);
+    let pokeList = ref<PokemonEntry[]>([]);
     let pokeInfo = ref<pokemonInfo[]>([]);
 
     const filteredList = computed(() => {
@@ -65,27 +72,31 @@ export default defineComponent({
 
     //methods
     const getPokemon = async (): Promise<void> => {
-      const res = await axios.get("https://pokeapi.co/api/v2/pokedex/9");
-      console.log("res2", res.data);
+      const init_region = 2;
+      const regionPokemon: RegionTypes = await store.dispatch(
+        "getRegionPokemon",
+        init_region.toString()
+      );
+      console.log("res2", regionPokemon);
 
-      state.region_api_data = res.data;
-      state.region_name = res.data.name;
-      state.region_pokemon = res.data.pokemon_entries;
+      state.region_api_data = regionPokemon;
+      state.region_name = regionPokemon.name;
+      state.region_pokemon = regionPokemon.pokemon_entries;
 
-      state.region_pokemon?.forEach((pokemon) => {
+      state.region_pokemon.forEach((pokemon) => {
         let name: string = pokemon.pokemon_species.name;
         getPokemonInfo(name);
       });
       console.log("pokeObject", pokeInfo);
 
-      pokeList.value = res.data.pokemon_entries;
+      pokeList.value = regionPokemon.pokemon_entries;
       console.log("pokeList", pokeList);
       // sortPokemon();
       pokeInfo.value.sort((a, b) => {
         return a.id - b.id;
       });
       console.log("sortedList", pokeInfo);
-      state.version = res.data.version;
+      // state.version = regionPokemon.version;
 
       console.log("kanto", RegionId.updated_johto);
     };

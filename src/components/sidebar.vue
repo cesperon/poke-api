@@ -2,7 +2,7 @@
   <div class="wrapper">
     <!-- Sidebar -->
     <nav id="sidebar">
-      <div class="sidebar-header">
+      <div class="sidebar-header mt-4">
         <h3>Poke-Search</h3>
         <img src="../assets/dex.jpg" class="mb-4" />
       </div>
