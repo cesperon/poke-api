@@ -46,4 +46,5 @@ export enum RegionId {
   extended_sinnoh,
   updated_johto,
   original_unova,
+  updated_unova,
 }

@@ -10,51 +10,49 @@
       <ul class="list-unstyled components">
         <h4>Regions</h4>
         <li class="active">
-          <a href="#">Kanto</a>
+          <a @click="customChange(RegionId[2])" href="#">Kanto</a>
         </li>
         <li>
-          <a href="#">Original Johto</a>
+          <a @click="customChange(RegionId[3])" href="#">Original Johto</a>
         </li>
         <li>
-          <a href="#">Updated Johto</a>
+          <a @click="customChange(RegionId[7])" href="#">Updated Johto</a>
         </li>
         <li>
-          <a href="#">Hoenn</a>
+          <a @click="customChange(RegionId[4])" href="#">Hoenn</a>
         </li>
         <li>
-          <a href="#">Original Sinnoh</a>
+          <a @click="customChange(RegionId[5])" href="#">Original Sinnoh</a>
         </li>
         <li>
-          <a href="#">Extended Sinnoh</a>
+          <a @click="customChange(RegionId[6])" href="#">Extended Sinnoh</a>
         </li>
         <li>
-          <a href="#">Original Unova</a>
+          <a @click="customChange(RegionId[8])" href="#">Original Unova</a>
         </li>
         <li>
-          <a href="#">Updated Unova</a>
+          <a @click="customChange(RegionId[9])" href="#">Updated Unova</a>
         </li>
       </ul>
     </nav>
-    <!-- Page Content -->
-    <!-- <div id="content">
-      <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-          <button type="button" id="sidebarCollapse" class="btn btn-info">
-            <i class="fas fa-align-left"></i>
-            <span>Toggle Sidebar</span>
-          </button>
-        </div>
-      </nav>
-    </div> -->
   </div>
 </template>
 
 <script lang="ts" scoped>
 import { defineComponent } from "vue";
+import { RegionId } from "@/types/pokeRegion.interface";
 
 export default defineComponent({
   name: "Sidebar",
   components: {},
+  setup(props, context) {
+    // emit event to parent
+    const customChange = (region: string) => {
+      context.emit("click", region);
+    };
+
+    return { customChange, RegionId };
+  },
 });
 </script>
 

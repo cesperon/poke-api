@@ -26,7 +26,7 @@ export interface PokeAPI {
   moves: Move[];
   name: string;
   order: number;
-  past_types: any[];
+  past_types: unknown[];
   species: Species;
   sprites: Sprites;
   stats: Stat[];

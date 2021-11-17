@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <sidebar></sidebar>
+    <sidebar @click="changeRegion"></sidebar>
     <div class="container">
       <div class="row">
         <div class="form-outline col-6 mx-auto mb-4 mt-4">
@@ -14,7 +14,8 @@
           />
         </div>
       </div>
-      <h2>{{ state.region_name }} pokemon</h2>
+      <h2>{{ regionData.region_name }} pokemon</h2>
+      <pokemonCard></pokemonCard>
       <div v-for="pokemon in filteredList" class="" :key="pokemon.id">
         <img :src="pokemon.image" />
         {{ pokemon.name }}
@@ -26,37 +27,22 @@
 
 <script lang="ts">
 import { defineComponent, reactive, ref, computed } from "vue";
-import axios from "axios";
 import { onMounted } from "vue";
-import {
-  pokeRegion,
-  RegionId,
-  RegionTypes,
-  PokemonEntry,
-} from "@/types/pokeRegion.interface";
+import { RegionId, PokemonEntry } from "@/types/pokeRegion.interface";
 import { pokemonInfo } from "@/types/pokeApi.interface";
 import sidebar from "@/components/sidebar.vue";
 import { useStore } from "vuex";
+import pokemonCard from "@/components/pokemonCard.vue";
 
 export default defineComponent({
   name: "Home",
-  components: { sidebar },
+  components: { sidebar, pokemonCard },
   setup() {
-    //reactive components
     const store = useStore();
-    const state: pokeRegion = reactive({
-      region_api_data: null,
-      region_name: null,
-      region_pokemon: null,
-      version: null,
-    });
-
     let searchText = ref("");
-    let pokeList = ref<PokemonEntry[]>([]);
-    let pokeInfo = ref<pokemonInfo[]>([]);
 
     const filteredList = computed(() => {
-      return pokeInfo.value.filter((pokemon: pokemonInfo) => {
+      return pokemonData.value.filter((pokemon: pokemonInfo) => {
         return (
           pokemon.name.includes(searchText.value) ||
           pokemon.id == parseInt(searchText.value)
@@ -67,59 +53,58 @@ export default defineComponent({
     //mounted hook
     onMounted(() => {
       getPokemon();
-      console.log("mounted", pokeInfo);
+      console.log("poke", store.getters.getRegionData);
     });
 
-    //methods
+    //get pokemondata from api by region
     const getPokemon = async (): Promise<void> => {
-      const init_region = 2;
-      const regionPokemon: RegionTypes = await store.dispatch(
-        "getRegionPokemon",
-        init_region.toString()
-      );
-      console.log("res2", regionPokemon);
-
-      state.region_api_data = regionPokemon;
-      state.region_name = regionPokemon.name;
-      state.region_pokemon = regionPokemon.pokemon_entries;
-
-      state.region_pokemon.forEach((pokemon) => {
-        let name: string = pokemon.pokemon_species.name;
-        getPokemonInfo(name);
-      });
-      console.log("pokeObject", pokeInfo);
-
-      pokeList.value = regionPokemon.pokemon_entries;
-      console.log("pokeList", pokeList);
-      // sortPokemon();
-      pokeInfo.value.sort((a, b) => {
-        return a.id - b.id;
-      });
-      console.log("sortedList", pokeInfo);
-      // state.version = regionPokemon.version;
-
-      console.log("kanto", RegionId.updated_johto);
-    };
-    //returns pokemonInfo object with require attributes
-    const getPokemonInfo = async (name: string): Promise<void> => {
       try {
-        const res = await axios.get(
-          `https://pokeapi.co/api/v2/pokemon/${name}`
-        );
-        let currentPokemon: pokemonInfo = {
-          id: res.data.id,
-          name: res.data.name,
-          image: res.data.sprites.front_shiny,
-          height: res.data.height,
-          weight: res.data.weight,
-        };
-        pokeInfo.value.push(currentPokemon);
-      } catch (error) {
-        console.log(error);
+        const init_region = RegionId.original_johto;
+        await store.dispatch("getRegionData", init_region.toString());
+
+        regionData.value.region_pokemon.forEach((pokemon: PokemonEntry) => {
+          let name: string = pokemon.pokemon_species.name;
+          getPokemonInfo(name);
+        });
+      } catch (err) {
+        console.log(err);
       }
     };
-
-    return { state, searchText, pokeList, filteredList, pokeInfo };
+    //Uses pokemon in region result and makes different call to api for each pokemon to get info
+    const getPokemonInfo = async (name: string): Promise<void> => {
+      try {
+        await store.dispatch("getRegionPokemon", name);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    const pokemonData = computed(() => {
+      console.log("pokeComp", store.getters.getPokemon);
+      return store.getters.getPokemon;
+    });
+    //region
+    const changeRegion = async (
+      region: keyof typeof RegionId
+    ): Promise<void> => {
+      try {
+        await store.dispatch(
+          "getRegionData",
+          RegionId[region as keyof typeof RegionId]
+        );
+        store.dispatch("clearRegionPokemon");
+        regionData.value.region_pokemon.forEach((pokemon: PokemonEntry) => {
+          let name: string = pokemon.pokemon_species.name;
+          getPokemonInfo(name);
+        });
+        console.log("pokeDatas", store.getters.getPokemon);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    const regionData = computed(() => {
+      return store.getters.getRegionData;
+    });
+    return { searchText, filteredList, regionData, changeRegion };
   },
 });
 </script>

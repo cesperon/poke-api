@@ -1,12 +1,21 @@
-import { createStore } from "vuex";
-import * as actions from "./actions";
-import getters from "./getters";
-import mutations from "./mutations";
-import state from "./state";
+import { InjectionKey } from "vue";
+import { createStore, useStore as baseUseStore, Store } from "vuex";
+import { State } from "./types";
+import { pokemon } from "@/store/pokemon";
 
-export default createStore({
-  state,
-  mutations,
-  actions,
-  getters,
+export const key: InjectionKey<Store<State>> = Symbol();
+
+export default createStore<State>({
+  state: {
+    initMessage: "Welcome to PokeSearch",
+  },
+  modules: {
+    pokemon,
+  },
 });
+
+// define your own `useStore` composition function
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export function useStore() {
+  return baseUseStore(key);
+}
