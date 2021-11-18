@@ -12,6 +12,7 @@ export interface pokemonInfo {
   image: string;
   height: number;
   weight: number;
+  types: Type[];
 }
 export interface PokeAPI {
   abilities: Ability[];

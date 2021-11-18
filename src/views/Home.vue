@@ -3,23 +3,28 @@
     <sidebar @click="changeRegion"></sidebar>
     <div class="container">
       <div class="row">
+        <h2 class="mt-4">{{ regionData.region_name }} pokemon</h2>
         <div class="form-outline col-6 mx-auto mb-4 mt-4">
           <input
             v-model="searchText"
             type="search"
             id="form1"
-            class="form-control"
+            class="form-control mb-4"
             placeholder="Search by name or pokemon number"
             aria-label="Search"
           />
         </div>
       </div>
-      <h2>{{ regionData.region_name }} pokemon</h2>
-      <pokemonCard></pokemonCard>
-      <div v-for="pokemon in filteredList" class="" :key="pokemon.id">
-        <img :src="pokemon.image" />
-        {{ pokemon.name }}
-        {{ pokemon.id }}
+      <div v-for="pokemon in filteredList" class="poke" :key="pokemon.id">
+        <pokemonCard
+          class="me-2"
+          :pokemonName="pokemon.name"
+          :pokemonID="pokemon.id"
+          :pokemonImg="pokemon.image"
+          :pokemonWeight="pokemon.weight"
+          :pokemonHeight="pokemon.height"
+          :pokemonTypes="pokemon.types"
+        ></pokemonCard>
       </div>
     </div>
   </div>
@@ -111,5 +116,8 @@ export default defineComponent({
 <style>
 input {
   width: 30px;
+}
+.poke {
+  display: inline-block;
 }
 </style>

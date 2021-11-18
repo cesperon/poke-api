@@ -30,6 +30,7 @@ export const actions: ActionTree<PokemonState, State> = {
       image: response.data.sprites.front_shiny,
       height: response.data.height,
       weight: response.data.weight,
+      types: response.data.types,
     };
     commit(PokemonMutations.SET_POKEMON_DATA, currentPokemon);
   },
