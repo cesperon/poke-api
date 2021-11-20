@@ -10,20 +10,30 @@
             type="search"
             id="form1"
             class="form-control mb-4"
-            placeholder="Search by name or pokemon number"
+            placeholder="Search by name, number or type"
             aria-label="Search"
           />
         </div>
       </div>
+      <!-- <div v-show="isOpenDetail">
+        <pokemonDetail></pokemonDetail>
+      </div> -->
       <div v-for="pokemon in filteredList" class="poke" :key="pokemon.id">
         <pokemonCard
           class="me-2"
           :pokemonName="pokemon.name"
           :pokemonID="pokemon.id"
-          :pokemonImg="pokemon.image"
+          :pokemonImgs="pokemon.images"
           :pokemonWeight="pokemon.weight"
           :pokemonHeight="pokemon.height"
           :pokemonTypes="pokemon.types"
+          :frontImg="pokemon.front_default"
+          :backImg="pokemon.back_default"
+          :frontShinyImg="pokemon.front_shiny"
+          :backShinyImg="pokemon.back_shiny"
+          :abilities="pokemon.abilities"
+          :game_index="pokemon.game_index"
+          :stats="pokemon.stats"
         ></pokemonCard>
       </div>
     </div>
@@ -38,6 +48,7 @@ import { pokemonInfo } from "@/types/pokeApi.interface";
 import sidebar from "@/components/sidebar.vue";
 import { useStore } from "vuex";
 import pokemonCard from "@/components/pokemonCard.vue";
+// import PokemonDetail from "@/components/pokemonDetail.vue";
 
 export default defineComponent({
   name: "Home",
@@ -45,12 +56,14 @@ export default defineComponent({
   setup() {
     const store = useStore();
     let searchText = ref("");
+    // let isOpenDetail = ref(false);
 
     const filteredList = computed(() => {
       return pokemonData.value.filter((pokemon: pokemonInfo) => {
         return (
           pokemon.name.includes(searchText.value) ||
-          pokemon.id == parseInt(searchText.value)
+          pokemon.id == parseInt(searchText.value) ||
+          pokemon.types.includes(searchText.value)
         );
       });
     });
@@ -87,6 +100,7 @@ export default defineComponent({
       console.log("pokeComp", store.getters.getPokemon);
       return store.getters.getPokemon;
     });
+
     //region
     const changeRegion = async (
       region: keyof typeof RegionId
@@ -109,7 +123,13 @@ export default defineComponent({
     const regionData = computed(() => {
       return store.getters.getRegionData;
     });
-    return { searchText, filteredList, regionData, changeRegion };
+
+    return {
+      searchText,
+      filteredList,
+      regionData,
+      changeRegion,
+    };
   },
 });
 </script>
