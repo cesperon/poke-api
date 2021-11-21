@@ -13,6 +13,12 @@ import {
 import axios from "axios";
 
 export const actions: ActionTree<PokemonState, State> = {
+  async getHabitatPokemon({ commit }, payload: string): Promise<void> {
+    const response = await axios.get(
+      `https://pokeapi.co/api/v2/pokemon-habitat/${payload}`
+    );
+    console.log("habitat", response);
+  },
   async getRegionData({ commit }, payload: string): Promise<void> {
     const response = await axios.get(
       `https://pokeapi.co/api/v2/pokedex/${payload}`

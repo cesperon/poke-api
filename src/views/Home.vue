@@ -79,7 +79,7 @@ export default defineComponent({
       try {
         const init_region = RegionId.original_johto;
         await store.dispatch("getRegionData", init_region.toString());
-
+        await store.dispatch("getHabitatPokemon", "1");
         regionData.value.region_pokemon.forEach((pokemon: PokemonEntry) => {
           let name: string = pokemon.pokemon_species.name;
           getPokemonInfo(name);

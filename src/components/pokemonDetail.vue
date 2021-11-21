@@ -1,6 +1,6 @@
 <template>
-  <div class="popup me-auto">
-    <div class="popup-inner form">
+  <div class="popup">
+    <div class="popup-inner form p-0">
       <div class="pokemonImages">
         <div>
           <img :src="frontImg" alt="" />
@@ -46,7 +46,7 @@
           </div>
         </div>
 
-        <button class="mt-4" @click="closeModal">Close</button>
+        <button class="mt-2 mb-2 btn-info" @click="closeModal">Close</button>
       </div>
     </div>
   </div>
@@ -119,5 +119,13 @@ img {
 }
 .game_index {
   display: inline-block;
+}
+.body-content {
+  border: 1px solid black;
+  background: #4071cc;
+  color: white;
+}
+.btn-info {
+  color: white;
 }
 </style>
