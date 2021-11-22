@@ -12,6 +12,10 @@ const state: PokemonState = {
     region_pokemon: null,
     version: null,
   },
+  habitatData: {
+    name: null,
+    pokemon_species: null,
+  },
   pokemonData: [],
 };
 

@@ -44,6 +44,7 @@
 import { defineComponent, reactive, ref, computed } from "vue";
 import { onMounted } from "vue";
 import { RegionId, PokemonEntry } from "@/types/pokeRegion.interface";
+import { habitatID } from "@/types/pokeHabitats.interface";
 import { pokemonInfo } from "@/types/pokeApi.interface";
 import sidebar from "@/components/sidebar.vue";
 import { useStore } from "vuex";
@@ -71,6 +72,7 @@ export default defineComponent({
     //mounted hook
     onMounted(() => {
       getPokemon();
+      changeHabitat();
       console.log("poke", store.getters.getRegionData);
     });
 
@@ -123,6 +125,16 @@ export default defineComponent({
     const regionData = computed(() => {
       return store.getters.getRegionData;
     });
+
+    //habitat
+    const changeHabitat = async (): Promise<void> => {
+      try {
+        const hpokemon = await store.dispatch("getHabitatPokemon", "1");
+        console.log("habitat", hpokemon);
+      } catch (err) {
+        console.log(err);
+      }
+    };
 
     return {
       searchText,
